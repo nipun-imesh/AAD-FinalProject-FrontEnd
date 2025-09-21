@@ -1,0 +1,7 @@
+![My Image](frontend/README/image.png)
+![My Image](frontend/README/index.png)
+![My Image](frontend/README/search.png)
+![My Image](frontend/README/destination.png)
+![My Image](frontend/README/map.png)
+![My Image](frontend/README/selectpay.png)
+![My Image](frontend/README/paymant.png)

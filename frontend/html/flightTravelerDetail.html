@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flight Booking UI</title>
+  <style>
+    :root {
+      --brand: #2563eb;
+      --muted: #6b7280;
+      --text: #111827;
+      --stroke: #e5e7eb;
+      --radius: 12px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #eef2f7;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header Styles */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(238, 240, 245, .6);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      background: linear-gradient(rgba(0, 0, 0, 0), rgba(255, 255, 255, 0));
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .8rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      text-decoration: none;
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand), #60a5fa);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      letter-spacing: .5px;
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, var(--brand), #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: var(--brand);
+      text-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-links a {
+      position: relative;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      padding: .6rem .8rem;
+      border-radius: 10px;
+      transition: all .3s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 4px;
+      width: 0;
+      height: 2px;
+      background: var(--brand);
+      border-radius: 4px;
+      transition: all .3s ease;
+      transform: translateX(-50%);
+    }
+
+    .nav-links a:hover {
+      color: var(--brand);
+      background: rgba(37, 99, 235, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .nav-links a:hover::after {
+      width: 60%;
+    }
+
+    .nav-links a.active {
+      color: var(--brand);
+    }
+
+    .nav-links a.active::after {
+      width: 60%;
+    }
+
+    .menu-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .menu-btn {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      color: var(--brand);
+      padding: 0.8rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
+    }
+
+    .menu-btn:hover {
+      background: rgba(37, 99, 235, 0.05);
+      border-color: var(--brand);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(37, 99, 235, 0.15);
+    }
+
+    .menu-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 280px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px) scale(0.95);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+
+    .menu-dropdown.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    .menu-header {
+      padding: 1.2rem 1.5rem 0.8rem;
+      border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(96, 165, 250, 0.05));
+    }
+
+    .menu-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--brand);
+      margin: 0;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .menu-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0.2rem 0 0;
+    }
+
+    .menu-items {
+      padding: 0.8rem 0;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 1.5rem;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .menu-item:hover {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(96, 165, 250, 0.08));
+      color: var(--brand);
+      transform: translateX(4px);
+    }
+
+    .menu-item.danger:hover {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(248, 113, 113, 0.08));
+      color: #ef4444;
+    }
+
+    .menu-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .menu-item:hover .menu-icon {
+      opacity: 1;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+      margin: 0.5rem 1rem;
+    }
+
+    /* Main Content Container */
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .left,
+    .right {
+      background: #fff;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .left:hover,
+    .right:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .left {
+      flex: 2;
+      min-width: 600px;
+    }
+
+    .right {
+      flex: 1;
+      min-width: 280px;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #222;
+    }
+
+    /* Flight Details Card */
+    .flight-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 22px;
+      background: linear-gradient(135deg, #dbeafe, #eff6ff);
+      border-radius: 14px;
+      border: 1px solid #c7ddff;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .flight-col {
+      text-align: center;
+      flex: 1;
+    }
+
+    .flight-time {
+      font-size: 26px;
+      font-weight: bold;
+      color: #004aad;
+    }
+
+    .flight-city {
+      font-size: 15px;
+      font-weight: 500;
+      margin-top: 5px;
+      color: #444;
+    }
+
+    .flight-date {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .flight-middle {
+      font-size: 15px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .flight-middle span {
+      display: block;
+      font-size: 13px;
+      font-weight: normal;
+      color: #555;
+      margin-top: 3px;
+    }
+
+    .extra-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 10px;
+      border: 1px dashed #ccc;
+      font-size: 14px;
+    }
+
+    .extra-info p {
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .extra-info span {
+      font-weight: bold;
+      color: #0052cc;
+    }
+
+    /* Traveler Info Form */
+    .section {
+      margin-top: 25px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #111827;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+
+    .form-group input,
+    .form-group select {
+      flex: 1;
+      min-width: 200px;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
+    }
+
+    .passport-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 10px;
+    }
+
+    .checkbox {
+      font-size: 14px;
+      margin-top: 15px;
+    }
+
+    .checkbox input {
+      margin-right: 6px;
+    }
+
+    .checkbox a {
+      color: #070d18;
+      text-decoration: none;
+    }
+
+    .checkbox a:hover {
+      text-decoration: underline;
+    }
+
+    /* Right Side - Fare Summary */
+    .fare-summary p {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+
+    .total {
+      font-weight: bold;
+      font-size: 22px;
+      color: #0066ff;
+      margin-top: 12px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #0066ff, #0052cc);
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #0052cc, #003d99);
+    }
+
+    /* Footer Styles */
+    .footer {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(59, 130, 246, 0.95));
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 3rem 0 2rem;
+      margin-top: auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-logo {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .footer-brand-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    .footer-description {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .footer-bottom {
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+
+    .footer-bottom p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .footer-heart {
+      color: #ef4444;
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .left,
+      .right {
+        min-width: 100%;
+      }
+
+      .nav {
+        padding: .8rem 1rem;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .footer-content {
+        padding: 0 1rem;
+      }
+    }
+
+    .back-btn {
+      align-self: flex-start;
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      background: rgb(17, 116, 255);
+      color: white;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background: rgb(17, 116, 255);
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="nav">
+      <a class="brand" href="#">
+        <div class="logo">✈</div>
+        <div class="brand-title">Wanderlust</div>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="searchPage.html">Booking</a>
+        <a href="destination.html" >Destinations</a>
+        <a href="CustomerContact.html">Contact</a>
+      </nav>
+
+      <div class="menu-container">
+        <button class="menu-btn" onclick="toggleMenu()">
+          <span>Account</span>
+          <span style="margin-left: 4px; transition: transform 0.3s ease;" id="menu-arrow">▼</span>
+        </button>
+        <div class="menu-dropdown" id="menuDropdown">
+          <div class="menu-header">
+            <h3 class="menu-title">Account</h3>
+            <p class="menu-subtitle">Manage your travel preferences</p>
+          </div>
+          <div class="menu-items">
+            <button id="loginButton" class="menu-item" onclick="window.location.href='login.html'">
+              <span class="menu-icon">🔑</span>Login
+            </button>
+            <button id="signupButton" class="menu-item" onclick="window.location.href='signup.html'">
+              <span class="menu-icon">📝</span>Sign Up
+            </button>
+
+            <div class="menu-divider"></div>
+
+            <button id="profile" class="menu-item" onclick="window.location.href='profileManage.html'">
+              <span class="menu-icon">👤</span>My Profile
+            </button>
+
+            <div class="menu-divider"></div>
+
+            <button id="logoutbutton" class="menu-item danger">
+              <span class="menu-icon">🚪</span>Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <button class="back-btn" onclick="window.location.href='ticketBooking.html';">← Back</button>
+
+    <div class="container">
+      <!-- Left Side -->
+      <div class="left">
+        <h2>✈️ Flight Details</h2>
+        <div class="flight-details">
+          <div class="flight-col">
+            <div class="flight-time" id="departure-time">{}</div>
+            <div class="flight-city" id="departure-city"></div>
+            <div class="flight-date" id="departure-date"></div>
+          </div>
+
+          <div class="flight-col flight-middle">
+            ✈️<span id="flight-type"></span>
+            <span id="flight-duration"></span>
+          </div>
+
+          <div class="flight-col">
+            <div class="flight-time" id="arrival-time"></div>
+            <div class="flight-city" id="arrival-city"></div>
+            <div class="flight-date" id="arrival-date"></div>
+          </div>
+        </div>
+
+        <div class="extra-info">
+          <p>🛫 Flight: <span id="flight-number"></span></p>
+          <p>💺 Class: <span id="flight-traval-class"></span></p>
+          <p>🎒 Baggage: <span id="BaggageKg"></span></p>
+        </div>
+
+
+        <!-- Traveler Info Form -->
+        <div class="section">
+          <h2>Traveler Information</h2>
+
+          <div class="form-group">
+            <div>
+              <label>Title *</label>
+              <select required>
+                <option value="">Select Title</option>
+                <option>Mr</option>
+                <option>Ms</option>
+                <option>Mrs</option>
+              </select>
+            </div>
+            <div>
+              <label>First Name *</label>
+              <input type="text" placeholder="Enter first name" required>
+            </div>
+            <div>
+              <label>Surname *</label>
+              <input type="text" placeholder="Enter surname" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div>
+              <label>Date of Birth *</label>
+              <input type="date" required>
+            </div>
+            <div>
+              <label>Nationality *</label>
+              <select id="country" required>
+                <option value="Sri Lanka">Sri Lanka</option>
+                <option value="United Arab Emirates">United Arab Emirates</option>
+                <option value="Qatar">Qatar</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Singapore">Singapore</option>
+                <option value="Türkiye">Türkiye</option>
+                <option value="Thailand">Thailand</option>
+                <option value="Malaysia">Malaysia</option>
+                <option value="France">France</option>
+                <option value="USA">USA</option>
+                <option value="Japan">Japan</option>
+                <option value="Australia">Australia</option>
+                <option value="India">India</option>
+                <option value="Germany">Germany</option>
+                <option value="Canada">Canada</option>
+                <option value="Hong Kong SAR">Hong Kong SAR</option>
+                <option value="South Korea">South Korea</option>
+                <option value="Spain">Spain</option>
+                <option value="Italy">Italy</option>
+                <option value="Netherlands">Netherlands</option>
+                <option value="Switzerland">Switzerland</option>
+                <option value="Austria">Austria</option>
+                <option value="Denmark">Denmark</option>
+                <option value="Sweden">Sweden</option>
+                <option value="New Zealand">New Zealand</option>
+                <option value="South Africa">South Africa</option>
+                <option value="Belgium">Belgium</option>
+                <option value="Portugal">Portugal</option>
+                <option value="Greece">Greece</option>
+                <option value="Poland">Poland</option>
+                <option value="Finland">Finland</option>
+                <option value="Norway">Norway</option>
+                <option value="Hungary">Hungary</option>
+                <option value="Czech Republic">Czech Republic</option>
+                <option value="Russia">Russia</option>
+                <option value="China">China</option>
+                <option value="Philippines">Philippines</option>
+                <option value="Indonesia">Indonesia</option>
+                <option value="Vietnam">Vietnam</option>
+                <option value="Maldives">Maldives</option>
+                <option value="Oman">Oman</option>
+                <option value="Saudi Arabia">Saudi Arabia</option>
+                <option value="Bahrain">Bahrain</option>
+                <option value="Jordan">Jordan</option>
+                <option value="Morocco">Morocco</option>
+                <option value="Mexico">Mexico</option>
+                <option value="Colombia">Colombia</option>
+                <option value="Peru">Peru</option>
+                <option value="Chile">Chile</option>
+                <option value="Argentina">Argentina</option>
+            </select>
+            
+            </div>
+          </div>
+
+          <div class="section passport-card">
+            <div class="section-title">Passport Information</div>
+            <div class="form-group">
+              <div>
+                <label>Passport Number *</label>
+                <input type="text" placeholder="Enter passport number" required>
+              </div>
+              <div>
+                <label>Passport Expiry Date *</label>
+                <input type="date" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div>
+              <label>Mobile Number *</label>
+              <input type="text" placeholder="+94  ...." required>
+            </div>
+            <div>
+              <label>Email Address *</label>
+              <input type="email" placeholder="Email" required>
+            </div>
+          </div>
+
+          <div class="checkbox">
+            <input type="checkbox" required>
+            I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side -->
+      <div class="right">
+        <h2>Fare Summary</h2>
+        <div class="fare-summary">
+          <p><span>Base Fare </span><span>USD <span id="base-fare"></span></span></p>
+          <p><span>Taxes & Fees</span><span>USD <span id="taxes-and-fees"></span></span></p>
+          <p style="color: green;"><span>Member Discount</span><span>-USD <span id="member-discount"></span></p>
+          <p class="total"><span>Grand Total</span><span>USD <span id="grand-total"></span></p>
+        </div>
+
+        <button class="btn" onclick="saveBookingData()">Continue to Payment →</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">
+            <div class="footer-logo">W</div>
+            <div class="footer-brand-text">WanderLite</div>
+          </div>
+          <p class="footer-description">Your gateway to extraordinary adventures. Discover breathtaking
+            destinations,
+            connect with fellow travelers, and create memories that last a lifetime.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Support</a>
+          <a href="#">Contact Us</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 WanderLite Travel. Made with <span class="footer-heart">♥</span> for adventurers worldwide.
+        </p>
+      </div>
+    </div>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+    function loadFlightDetails() {
+      const flightData = JSON.parse(localStorage.getItem("selectedFlight"));
+      if (!flightData) return;
+
+      // Departure
+      $("#departure-time").text(flightData.departureTime || "-");
+      $("#departure-city").text(flightData.departureAirport || "-");
+      $("#departure-date").text(flightData.departureDate || "-");
+
+      // Arrival
+      $("#arrival-time").text(flightData.arrivalTime || "-");
+      $("#arrival-city").text(flightData.arrivalAirport || "-");
+      $("#arrival-date").text(flightData.arrivalDate || "-");
+
+      // Middle info
+      $("#flight-type").text(flightData.ticketType || "-");
+      $("#flight-duration").text(flightData.flightDuration || "-");
+
+      // Extra Info
+      $("#flight-number").text(flightData.flightNumber || "-");
+      $("#flight-traval-class").text(flightData.travelClass || "-");
+      $("#BaggageKg").text(
+        `${flightData.checkedBaggageKg || 0}kg + Cabin ${flightData.cabinBaggageKg || 0}kg`
+      );
+
+      //  Right Side
+      // Convert values to numbers safely
+      const baseFare = parseFloat(flightData.totalPrice) || 0;
+      const taxes = parseFloat(flightData.taxesAndFees) || 0;
+      const discount = parseFloat(flightData.memberDiscount) || 0;
+
+      // Calculate grand total
+      const grandTotal = (baseFare + taxes) - discount;
+
+      // Update UI
+      $("#base-fare").text(baseFare.toFixed(2));
+      $("#taxes-and-fees").text(taxes.toFixed(2));
+      $("#member-discount").text(discount.toFixed(2));
+      $("#grand-total").text(grandTotal.toFixed(2));
+
+      console.log(grandTotal, "✅ calculated total");
+
+    }
+
+
+    // Dropdown toggle
+    function toggleMenu() {
+      const dropdown = document.getElementById("menuDropdown");
+      const arrow = document.getElementById("menu-arrow");
+
+      dropdown.classList.toggle("show");
+      arrow.style.transform = dropdown.classList.contains("show")
+        ? "rotate(180deg)"
+        : "rotate(0deg)";
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+      const menuContainer = document.querySelector(".menu-container");
+      const dropdown = document.getElementById("menuDropdown");
+      const arrow = document.getElementById("menu-arrow");
+
+      if (menuContainer && !menuContainer.contains(event.target)) {
+        dropdown.classList.remove("show");
+        arrow.style.transform = "rotate(0deg)";
+      }
+    });
+
+    // Call on page load
+    $(document).ready(loadFlightDetails);
+
+    $(document).ready(function () {
+      // Check login status on page load
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        $("#profile").show();
+        $("#logoutbutton").show();
+        $("#loginButton").hide();
+        $("#signupButton").hide();
+      } else {
+        $("#profile").hide();
+        $("#logoutbutton").hide();
+        $("#loginButton").show();
+        $("#signupButton").show();
+      }
+    });
+
+    $("#logoutbutton").click(function () {
+      try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("email");
+        localStorage.removeItem("role");
+        style = document.getElementById("profile").style.display = "none";
+        alert("You have been logged out!");
+        window.location.href = "index.html";
+      } catch (err) {
+        console.error("Logout error:", err);
+        alert("You have been logged out!");
+        window.location.href = "index.html";
+      }
+    });
+
+    function saveBookingData() {
+      // Flight details
+      const flightData = JSON.parse(localStorage.getItem("selectedFlight")) || {};
+
+      // Traveler details
+      const travelerData = {
+        title: $("select:eq(0)").val(),
+        firstName: $("input[placeholder='Enter first name']").val(),
+        surname: $("input[placeholder='Enter surname']").val(),
+        dob: $("input[type='date']:eq(0)").val(),
+        nationality: $("select:eq(1)").val(),
+        passportNumber: $("input[placeholder='Enter passport number']").val(),
+        passportExpiry: $("input[type='date']:eq(1)").val(),
+        mobile: $("input[placeholder='+94  ....']").val(),
+        email: $("input[type='email']").val(),
+      };
+
+      // Fare Summary
+      const fareData = {
+        baseFare: $("#base-fare").text(),
+        taxes: $("#taxes-and-fees").text(),
+        discount: $("#member-discount").text(),
+        grandTotal: $("#grand-total").text()
+      };
+
+      // Combine everything
+      const bookingData = {
+        flight: flightData,
+        traveler: travelerData,
+        fare: fareData
+      };
+
+      // Save to localStorage
+      localStorage.setItem("bookingData", JSON.stringify(bookingData));
+
+      console.log("✅ Booking Data Saved", bookingData);
+
+      // Redirect to payment page
+      window.location.href = 'payment.html';
+    }
+  </script>
+
+</body>
+
+</html>

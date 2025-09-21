@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wanderlust - Welcome Back</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { 
+      width:100%; 
+      min-height:100%; 
+      overflow-x:hidden; /* remove horizontal scroll */
+      font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    body {
+      display:flex;
+      flex-direction:column;
+      line-height:1.6;
+      background: url('../image/login/loginMain.png') no-repeat center center/cover;
+      position: relative;
+    }
+    body::before {
+      content:"";
+      position:absolute; top:0; left:0; right:0; bottom:0;
+      background:rgba(0,0,0,0.45);
+      z-index:-1;
+    }
+
+    .header {
+      background:rgba(178, 216, 240, 0.95);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(255,255,255,0.2);
+      padding:0 1rem;
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .logo {display:flex; align-items:center; gap:8px;}
+    .logo-icon {
+      width:32px; height:32px;
+      background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+      border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      color:white; font-weight:bold; font-size:18px;
+    }
+    .logo-text {
+      font-size:28px; font-weight:700;
+      background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+      background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      letter-spacing:-0.5px;
+    }
+
+    /* Main container optimized */
+    .main-container {
+      flex:1;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      padding:2rem 0; /* removed side padding */
+      overflow-y:auto;
+      overflow-x:hidden; /* remove horizontal scroll */
+      width:100%;
+    }
+
+    .right-panel {
+      width:100%;
+      max-width:400px;
+      background:rgba(255,255,255,0.15);
+      backdrop-filter:blur(20px) saturate(180%);
+      border-radius:16px;
+      display:flex;
+      flex-direction:column;
+      padding:1.5rem;
+      border:1px solid rgba(255,255,255,0.3);
+      box-shadow:0 8px 30px rgba(0,0,0,0.3);
+      color:white;
+      box-sizing:border-box;
+    }
+
+    .back-btn {
+      align-self:flex-start;
+      margin-bottom:1rem;
+      padding:0.5rem 1rem;
+      border:none;
+      border-radius:6px;
+      background:rgba(255,255,255,0.2);
+      color:white;
+      font-size:0.95rem;
+      cursor:pointer;
+    }
+    .back-btn:hover { background:rgba(255,255,255,0.35); }
+
+    .form-header { text-align:center; margin-bottom:.5rem; }
+    .form-header h1 { font-size:2rem; font-weight:700; color:white; margin-bottom:0.5rem; }
+    .form-header p { color:#e5e7eb; font-size:1rem; }
+
+    .form-group { margin-bottom:1.5rem; width:100%; }
+    .form-label {
+      display:block;
+      font-weight:600;
+      color:#f3f4f6;
+      margin-bottom:0.5rem;
+      font-size:0.95rem;
+    }
+    .form-input {
+      width:100%;
+      padding:0.9rem 1rem;
+      border:2px solid rgba(255,255,255,0.3);
+      border-radius:10px;
+      font-size:1.05rem;
+      background:rgba(255,255,255,0.2);
+      color:white;
+    }
+    .form-input::placeholder { color:#e5e7eb; }
+    .form-input:focus {
+      outline:none;
+      border-color:#3b82f6;
+      box-shadow:0 0 0 3px rgba(59,130,246,0.3);
+      background:rgba(255,255,255,0.25);
+    }
+
+    .primary-btn {
+      width:100%;
+      padding:0.875rem;
+      background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+      color:white;
+      border:none;
+      border-radius:8px;
+      font-size:1rem;
+      font-weight:600;
+      cursor:pointer;
+      margin-top:1rem;
+      position:relative;
+    }
+    .primary-btn:hover { background:linear-gradient(135deg,#1e40af,#2563eb); }
+    .primary-btn:disabled { opacity:0.7; cursor:not-allowed; }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+      display: none;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Social Login Styles */
+    .social-login { margin: 1.5rem 0; text-align: center; }
+    .social-divider {
+      display: flex;
+      align-items: center;
+      margin: 1rem 0;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+    }
+    .social-divider::before,
+    .social-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.3);
+    }
+    .social-divider span { padding: 0 1rem; }
+    .social-buttons { display: flex; gap: 1rem; justify-content: center; }
+    .social-btn {
+      width: 48px; height: 48px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      display: flex; align-items:center; justify-content:center;
+      cursor:pointer; transition: all 0.3s; position: relative; overflow:hidden;
+    }
+    .social-btn:hover {
+      background: white;
+      border-color: rgba(255,255,255,0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .social-btn img { width:24px; height:24px; object-fit:contain; }
+
+    /* Message */
+    .message {
+      padding:0.75rem;
+      border-radius:8px;
+      margin-bottom:1rem;
+      font-size:0.9rem;
+      display:none;
+    }
+    .message.success { background: rgba(34,197,94,0.2); border:1px solid rgba(34,197,94,0.3); color:#22c55e; }
+    .message.error { background: rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.3); color:#ef4444; }
+
+    .footer {
+      background:linear-gradient(135deg, rgba(30,58,138,0.95), rgba(59,130,246,0.95));
+      padding:2rem 0;
+      text-align:center;
+      color:white;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">W</div>
+      <div class="logo-text">Wanderlust</div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="right-panel">
+      <button class="back-btn" onclick="window.location.href='index.html';">← Back</button>
+      <div id="message" class="message"></div>
+
+      <form id="loginForm">
+        <div class="form-header">
+          <h1>Welcome Back!</h1>
+          <p>Sign in to your account and continue your adventure</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="password" placeholder="Enter your password" required>
+        </div>
+
+        <p style="text-align:center;font-size:0.9rem;color:#f3f4f6;margin-top:1rem;">
+          <a href="varifcation.html" style="color:#3b82f6;text-decoration:none;font-weight:500;">Forgot Password</a>
+        </p>
+
+        <button type="submit" class="primary-btn" id="loginBtn">
+          <div class="loading-spinner" id="loginSpinner"></div>
+          <span id="loginText">Sign In</span>
+        </button>
+
+        <div class="social-login">
+          <div class="social-divider"><span>or continue with</span></div>
+          <div class="social-buttons">
+            <button type="button" class="social-btn" id="googleLogin" title="Sign in with Google">
+              <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+            </button>
+            <button type="button" class="social-btn" id="facebookLogin" title="Sign in with Facebook">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+            </button>
+            <button type="button" class="social-btn" id="appleLogin" title="Sign in with Apple">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
+            </button>
+          </div>
+        </div>
+
+        <p style="text-align:center;font-size:0.9rem;color:#f3f4f6;margin-top:1rem;">
+          Don't have an account?
+          <a href="signup.html" style="color:#3b82f6;text-decoration:none;font-weight:500;">Sign up for free</a>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2024 Wanderlust. Made with ♥ for adventurers worldwide.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+  <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+
+  <script src="../js/login.js"></script>
+</body>
+</html>

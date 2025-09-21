@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wanderlust - Adventure Awaits</title>
+<style>
+  * {margin:0; padding:0; box-sizing:border-box;}
+  html, body {width:100%; overflow-x:hidden;}
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background: url('../image/signup/signmain.png') no-repeat center center/cover;
+    position:relative;
+    line-height:1.6;
+  }
+  body::before {
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.45);
+    z-index:-1;
+  }
+
+  .header {
+    background: rgba(178, 216, 240, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid rgba(255,255,255,0.2);
+    padding:0 1rem;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .logo {display:flex; align-items:center; gap:8px;}
+  .logo-icon {
+    width:32px; height:32px;
+    background: linear-gradient(135deg,#1e3a8a,#3b82f6);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-weight:bold; font-size:18px;
+  }
+  .logo-text {
+    font-size:28px; font-weight:700;
+    background: linear-gradient(135deg,#1e3a8a,#3b82f6);
+    background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing:-0.5px;
+  }
+
+  .main-container {
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:4rem 1rem;
+    overflow:auto;
+  }
+
+  .right-panel {
+    width:100%;
+    max-width:800px;
+    height:auto;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem;
+    border:1px solid rgba(255,255,255,0.3);
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    flex-direction:column;
+    color:white;
+  }
+
+  .back-btn {
+    align-self:flex-start;
+    margin-bottom:1.5rem;
+    padding:0.5rem 1rem;
+    border:none;
+    border-radius:6px;
+    background:rgba(255,255,255,0.2);
+    color:white;
+    font-size:0.95rem;
+    cursor:pointer;
+  }
+  .back-btn:hover {
+    background:rgba(255,255,255,0.35);
+  }
+
+  .form-header {text-align:center; margin-bottom:2rem;}
+  .form-header h1 {font-size:2rem; font-weight:700; color:white; margin-bottom:0.5rem;}
+  .form-header p {color:#e5e7eb; font-size:1rem;}
+
+  .form-row {display:flex; gap:1rem; flex-wrap:wrap;}
+  .form-group {margin-bottom:1.5rem; width:100%;}
+  .form-label {display:block; font-weight:600; color:#f3f4f6; margin-bottom:0.5rem; font-size:0.95rem;}
+  .form-input, select {
+    width:100%;
+    padding:0.9rem 1rem;
+    border:2px solid rgba(255,255,255,0.3);
+    border-radius:10px;
+    font-size:1.05rem;
+    background: rgba(255,255,255,0.2);
+    color:white;
+  }
+  .form-input::placeholder {color:#e5e7eb;}
+  .form-input:focus, select:focus {
+    outline:none;
+    border-color:#3b82f6;
+    box-shadow:0 0 0 3px rgba(59,130,246,0.3);
+    background: rgba(255,255,255,0.25);
+  }
+  select {height:45px; appearance:none; -webkit-appearance:none; -moz-appearance:none; padding-right:2rem;}
+  select option {background:#1f2937; color:white;}
+
+  .primary-btn {
+    width:100%;
+    padding:0.875rem;
+    background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:1rem;
+  }
+  .primary-btn:hover {background:linear-gradient(135deg,#1e40af,#2563eb);}
+
+  /* Social Login Styles */
+  .social-login {
+    margin: 1.5rem 0;
+    text-align: center;
+    width: 100%;
+  }
+  .social-divider {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+    color: #e5e7eb;
+    font-size: 0.9rem;
+  }
+  .social-divider::before,
+  .social-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.3);
+  }
+  .social-divider span {
+    padding: 0 1rem;
+  }
+  .social-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+  .social-btn {
+    width: 48px;
+    height: 48px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .social-btn:hover {
+    background: white;
+    border-color: rgba(255,255,255,0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+  .social-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Social Icons */
+  .social-btn img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  /* Loading Spinner */
+  .loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+    display: none;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Message Display */
+  .message {
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    display: none;
+    width: 100%;
+  }
+  .message.success {
+    background: rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+  }
+  .message.error {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+  }
+
+  .footer {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(59, 130, 246, 0.95));
+    padding:2rem 0;
+    text-align:center;
+    color:white;
+  }
+
+  @media(max-width:700px) {.form-row {flex-direction:column;}}
+  @media(max-width:550px){
+    .right-panel {padding:1.5rem;}
+    .form-header h1 {font-size:1.5rem;}
+    .social-buttons {gap: 0.8rem;}
+    .social-btn {width: 44px; height: 44px;}
+    .social-btn img {width: 22px; height: 22px;}
+  }
+</style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">W</div>
+      <div class="logo-text">Wanderlust</div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="right-panel">
+      <!-- Back Button -->
+      <button class="back-btn" onclick="window.location.href='index.html';">← Back</button>
+
+      <!-- Message Display -->
+      <div id="message" class="message"></div>
+
+      <form class="signup-form" id="signupForm">
+        <div class="form-header">
+          <h1>Join the Adventure!</h1>
+          <p>Create your account and start discovering amazing destinations</p>
+        </div>
+
+        <!-- Row 1: First + Last Name -->
+        <div class="form-row">
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" id="firstName" placeholder="First Name" required>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" id="lastName" placeholder="Last Name" required>
+          </div>
+        </div>
+
+        <!-- Row 2: Email + Password -->
+        <div class="form-row">
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="email" placeholder="Email Address" required>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="password" placeholder="Create Password" required>
+          </div>
+        </div>
+
+        <!-- Row 3: Country -->
+        <div class="form-group">
+          <label class="form-label">Country</label>
+          <select id="country" required>
+            <option value="Sri Lanka">Sri Lanka</option>
+            <option value="United Arab Emirates">United Arab Emirates</option>
+            <option value="Qatar">Qatar</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Singapore">Singapore</option>
+            <option value="Türkiye">Türkiye</option>
+            <option value="Thailand">Thailand</option>
+            <option value="Malaysia">Malaysia</option>
+            <option value="France">France</option>
+            <option value="USA">USA</option>
+            <option value="Japan">Japan</option>
+            <option value="Australia">Australia</option>
+            <option value="India">India</option>
+            <option value="Germany">Germany</option>
+            <option value="Canada">Canada</option>
+            <option value="Hong Kong SAR">Hong Kong SAR</option>
+            <option value="South Korea">South Korea</option>
+            <option value="Spain">Spain</option>
+            <option value="Italy">Italy</option>
+            <option value="Netherlands">Netherlands</option>
+            <option value="Switzerland">Switzerland</option>
+            <option value="Austria">Austria</option>
+            <option value="Denmark">Denmark</option>
+            <option value="Sweden">Sweden</option>
+            <option value="New Zealand">New Zealand</option>
+            <option value="South Africa">South Africa</option>
+            <option value="Belgium">Belgium</option>
+            <option value="Portugal">Portugal</option>
+            <option value="Greece">Greece</option>
+            <option value="Poland">Poland</option>
+            <option value="Finland">Finland</option>
+            <option value="Norway">Norway</option>
+            <option value="Hungary">Hungary</option>
+            <option value="Czech Republic">Czech Republic</option>
+            <option value="Russia">Russia</option>
+            <option value="China">China</option>
+            <option value="Philippines">Philippines</option>
+            <option value="Indonesia">Indonesia</option>
+            <option value="Vietnam">Vietnam</option>
+            <option value="Maldives">Maldives</option>
+            <option value="Oman">Oman</option>
+            <option value="Saudi Arabia">Saudi Arabia</option>
+            <option value="Bahrain">Bahrain</option>
+            <option value="Jordan">Jordan</option>
+            <option value="Morocco">Morocco</option>
+            <option value="Mexico">Mexico</option>
+            <option value="Colombia">Colombia</option>
+            <option value="Peru">Peru</option>
+            <option value="Chile">Chile</option>
+            <option value="Argentina">Argentina</option>
+        </select>
+        </div>
+
+        <button type="submit" class="primary-btn">
+          <div class="loading-spinner" id="signupSpinner"></div>
+          <span id="signupText">Create Account</span>
+        </button>
+
+        <!-- Social Login Section -->
+        <div class="social-login">
+          <div class="social-divider">
+            <span>or continue with</span>
+          </div>
+          <div class="social-buttons">
+            <button type="button" class="social-btn" id="googleSignup" title="Sign up with Google">
+              <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+            </button>
+            <button type="button" class="social-btn" id="facebookSignup" title="Sign up with Facebook">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+            </button>
+            <button type="button" class="social-btn" id="appleSignup" title="Sign up with Apple">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
+            </button>
+          </div>
+        </div>
+
+        <p style="text-align:center;font-size:0.9rem;color:#f3f4f6;margin-top:1rem;">
+          Already have an account? <a href="login.html" style="color:#3b82f6;text-decoration:none;font-weight:500;">Sign in</a>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2024 Wanderlust. Made with ♥ for adventurers worldwide.</p>
+  </footer>
+
+  <!-- Social Login Scripts -->
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+  <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+    
+        // =====================
+        // Message Display Utility
+        // =====================
+        function showMessage(text, type) {
+            const messageEl = $('#message');
+            messageEl.text(text).removeClass('success error').addClass(type).show();
+            if(type === 'success') {
+                setTimeout(() => messageEl.hide(), 3000);
+            }
+        }
+    
+        // =====================
+        // Loading Utilities
+        // =====================
+        function showLoading(btn) {
+            btn.prop('disabled', true).css('opacity', '0.7');
+        }
+        function hideLoading(btn) {
+            btn.prop('disabled', false).css('opacity', '1');
+        }
+    
+        // =====================
+        // Regular Signup Form
+        // =====================
+        $('#signupForm').on('submit', function(e) {
+            e.preventDefault();
+    
+            const signupBtn = $('.primary-btn');
+            const signupSpinner = $('#signupSpinner');
+            const signupText = $('#signupText');
+    
+            const formData = {
+                firstName: $('#firstName').val(),
+                lastName: $('#lastName').val(),
+                email: $('#email').val(),
+                password: $('#password').val(),
+                country: $('#country').val(),
+                role: 'USER'
+            };
+    
+            showLoading(signupBtn);
+            signupSpinner.show();
+            signupText.text('Creating Account...');
+    
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/user/register',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    if(response.statusCode === 201){ // Created
+                        showMessage('Account created successfully! Redirecting...', 'success');
+                        localStorage.setItem('authData', JSON.stringify(response.data)); // store token/email
+                        setTimeout(() => window.location.href = 'index.html', 1500);
+                    } else {
+                        showMessage(response.message || 'Signup failed', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    let msg = 'Signup failed';
+                    if(xhr.responseJSON && xhr.responseJSON.message){
+                        msg = xhr.responseJSON.message;
+                    }
+                    showMessage(msg, 'error');
+                },
+                complete: function() {
+                    hideLoading(signupBtn);
+                    signupSpinner.hide();
+                    signupText.text('Create Account');
+                }
+            });
+        });
+    
+        // =====================
+        // Social Signup Handlers
+        // =====================
+        async function socialSignup(provider, userData) {
+            try {
+                showMessage(`Signing up with ${provider}...`, 'success');
+                // Send AJAX to your backend if needed
+                // Example: AJAX call like regular signup
+                // $.post('/api/v1/user/social', JSON.stringify(userData))
+    
+                localStorage.setItem('authData', JSON.stringify(userData));
+                setTimeout(() => window.location.href = 'dashboard.html', 1500);
+            } catch(err) {
+                console.error(`${provider} signup error:`, err);
+                showMessage(`${provider} signup failed. Please try again.`, 'error');
+            }
+        }
+    
+        // Google Signup
+        $('#googleSignup').on('click', async function() {
+            const btn = $(this);
+            showLoading(btn);
+    
+            try {
+                if (!window.gapi) throw new Error('Google API not loaded');
+                await new Promise(resolve => gapi.load('auth2', resolve));
+                const authInstance = gapi.auth2.getAuthInstance() || 
+                                     await gapi.auth2.init({ client_id: 'YOUR_GOOGLE_CLIENT_ID' });
+                const user = await authInstance.signIn();
+                const profile = user.getBasicProfile();
+    
+                const userData = {
+                    provider: 'google',
+                    id: profile.getId(),
+                    firstName: profile.getGivenName(),
+                    lastName: profile.getFamilyName(),
+                    name: profile.getName(),
+                    email: profile.getEmail(),
+                    picture: profile.getImageUrl()
+                };
+                await socialSignup('Google', userData);
+            } catch(err) {
+                console.error(err);
+                showMessage('Google signup failed. Try again.', 'error');
+            } finally {
+                hideLoading(btn);
+            }
+        });
+    
+        // Facebook Signup
+        $('#facebookSignup').on('click', async function() {
+            const btn = $(this);
+            showLoading(btn);
+    
+            try {
+                if(!window.FB) throw new Error('Facebook SDK not loaded');
+                FB.init({ appId: 'YOUR_FACEBOOK_APP_ID', cookie:true, xfbml:true, version:'v18.0' });
+    
+                FB.login(function(response){
+                    if(response.status === 'connected'){
+                        FB.api('/me', {fields:'name,first_name,last_name,email,picture'}, function(profile){
+                            const userData = {
+                                provider: 'facebook',
+                                id: profile.id,
+                                firstName: profile.first_name,
+                                lastName: profile.last_name,
+                                name: profile.name,
+                                email: profile.email,
+                                picture: profile.picture.data.url
+                            };
+                            socialSignup('Facebook', userData);
+                        });
+                    } else {
+                        showMessage('Facebook signup cancelled', 'error');
+                    }
+                }, {scope:'email,public_profile'});
+            } catch(err){
+                console.error(err);
+                showMessage('Facebook signup failed. Try again.', 'error');
+            } finally {
+                hideLoading(btn);
+            }
+        });
+    
+        // Apple Signup
+        $('#appleSignup').on('click', async function() {
+            const btn = $(this);
+            showLoading(btn);
+    
+            try {
+                if(!window.AppleID) throw new Error('Apple ID SDK not loaded');
+                const response = await AppleID.auth.signIn();
+                const userData = {
+                    provider:'apple',
+                    id: response.user,
+                    firstName: response.fullName ? response.fullName.givenName : 'Apple',
+                    lastName: response.fullName ? response.fullName.familyName : 'User',
+                    name: response.fullName ? `${response.fullName.givenName} ${response.fullName.familyName}` : 'Apple User',
+                    email: response.email || 'private@appleid.com'
+                };
+                await socialSignup('Apple', userData);
+            } catch(err) {
+                console.error(err);
+                showMessage('Apple signup failed. Try again.', 'error');
+            } finally {
+                hideLoading(btn);
+            }
+        });
+    
+    });
+    </script>
+    </body>
+</html>

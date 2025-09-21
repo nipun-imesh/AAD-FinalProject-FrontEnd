@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wanderlust - Verify Your Email</title>
+ 
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; overflow-x:hidden; }
+  body {
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:url('../image/login/loginMain.png') no-repeat center center/cover;
+    position:relative;
+    line-height:1.6;
+  }
+  body::before {
+    content:"";
+    position:absolute; top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.45);
+    z-index:-1;
+  }
+
+  .header {
+    background:rgba(178, 216, 240, 0.95);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(255,255,255,0.2);
+    padding:0 1rem;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .logo {display:flex; align-items:center; gap:8px;}
+  .logo-icon {
+    width:32px; height:32px;
+    background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-weight:bold; font-size:18px;
+  }
+  .logo-text {
+    font-size:28px; font-weight:700;
+    background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+    background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    letter-spacing:-0.5px;
+  }
+
+  .main-container {
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:4rem 1rem;
+    overflow:auto;
+  }
+
+  .verification-panel {
+    width:100%;
+    max-width:450px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(20px) saturate(180%);
+    border-radius:16px;
+    display:flex;
+    flex-direction:column;
+    padding:2rem;
+    border:1px solid rgba(255,255,255,0.3);
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    color:white;
+    text-align:center;
+  }
+
+  .verification-icon {
+    width:80px;
+    height:80px;
+    background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 2rem;
+    animation:pulse 2s ease-in-out infinite;
+  }
+  .verification-icon::before {
+    content:"📧";
+    font-size:32px;
+    filter:brightness(0) invert(1);
+  }
+
+  .form-header h1 {
+    font-size:2rem;
+    font-weight:700;
+    color:white;
+    margin-bottom:0.5rem;
+  }
+  .form-header p {
+    color:#e5e7eb;
+    font-size:1rem;
+    margin-bottom:1.5rem;
+  }
+
+  .email-input, .otp-input {
+    width:100%;
+    padding:0.9rem 1rem;
+    border:2px solid rgba(255,255,255,0.3);
+    border-radius:10px;
+    font-size:1.05rem;
+    background:rgba(255,255,255,0.2);
+    color:white;
+    margin-bottom:1rem;
+  }
+  .email-input::placeholder, .otp-input::placeholder { color:#e5e7eb; }
+  .email-input:focus, .otp-input:focus {
+    outline:none;
+    border-color:#3b82f6;
+    box-shadow:0 0 0 3px rgba(59,130,246,0.3);
+    background:rgba(255,255,255,0.25);
+  }
+
+  .otp-inputs {
+    display:flex;
+    gap:0.75rem;
+    justify-content:center;
+    margin-bottom:1rem;
+  }
+  .otp-input {
+    width:60px;
+    height:60px;
+    text-align:center;
+    font-size:1.5rem;
+    font-weight:600;
+  }
+
+  .primary-btn {
+    width:100%;
+    padding:0.875rem;
+    background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:1rem;
+  }
+  .primary-btn:hover {
+    background:linear-gradient(135deg,#1e40af,#2563eb);
+  }
+
+  .error-message {
+    color:#ef4444;
+    font-size:0.875rem;
+    margin-top:0.5rem;
+    display:none;
+  }
+
+  @keyframes pulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.9; }
+  }
+
+  .footer {
+    background:linear-gradient(135deg, rgba(30,58,138,0.95), rgba(59,130,246,0.95));
+    padding:2rem 0;
+    text-align:center;
+    color:white;
+  }
+</style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">W</div>
+      <div class="logo-text">Wanderlust</div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="verification-panel">
+      <div class="verification-icon"></div>
+
+      <!-- Step 1: Email Form -->
+      <div id="emailStep">
+        <div class="form-header">
+          <h1>Enter Your Email</h1>
+          <p>We’ll send you a verification code</p>
+        </div>
+        <form id="emailForm">
+          <input type="email" id="emailInput" class="email-input" placeholder="Enter your email" required>
+          <button type="submit" class="primary-btn">Send Verification Code</button>
+        </form>
+        <button id="backBtnt" onclick="window.location.href='login.html';" class="primary-btn" style="margin-top:0.75rem; background:#6b7280;">
+          ← Back
+        </button>
+      </div>
+
+      <!-- Step 2: OTP Form -->
+      <div id="otpStep" style="display:none;">
+        <div class="form-header">
+          <h1>Verify Your Email</h1>
+          <p>We’ve sent a verification code to <span id="emailDisplay"></span></p>
+        </div>
+        <form id="otpForm">
+          <div class="otp-inputs">
+            <input type="text" maxlength="1" class="otp-input" data-index="0">
+            <input type="text" maxlength="1" class="otp-input" data-index="1">
+            <input type="text" maxlength="1" class="otp-input" data-index="2">
+            <input type="text" maxlength="1" class="otp-input" data-index="3">
+          </div>
+          <div class="error-message" id="otpError">Please enter the complete 4-digit code</div>
+          <button type="submit" class="primary-btn">Verify Code</button>
+        </form>
+        <button id="backBtn" class="primary-btn" style="margin-top:0.75rem; background:#6b7280;">
+          ← Back
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2024 Wanderlust. Made with ♥ for adventurers worldwide.</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+  $(function () {
+    let userEmail = "";
+    let sentOTP = ""; 
+
+    // Step 1: Email submission
+    $("#emailForm").on("submit", function (e) {
+      e.preventDefault();
+      userEmail = $("#emailInput").val().trim();
+      if (!userEmail) return;
+
+      $.ajax({
+        url: "http://localhost:8080/api/v1/password/sentOTP",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ email: userEmail }),
+        success: function (otp) {
+          sentOTP = otp; 
+          $("#emailStep").hide();
+          $("#otpStep").show();
+          $("#emailDisplay").text(userEmail);
+        },
+        error: function () {
+          alert("❌ Failed to send code. Try again.");
+        }
+      });
+    });
+
+    // Step 2: OTP verification
+    $("#otpForm").on("submit", function (e) {
+      e.preventDefault();
+      const enteredOTP = $(".otp-input").map(function () {
+        return $(this).val();
+      }).get().join("");
+
+      if (enteredOTP.length !== 4) {
+        $("#otpError").text("Please enter the complete 4-digit code").show();
+        return;
+      }
+
+      if (enteredOTP === sentOTP) {
+        alert("✅ OTP Verified! Redirecting to reset password page...");
+        localStorage.setItem("userEmail", userEmail); 
+        window.location.href = "fogertPassword.html"; 
+      } else {
+        $("#otpError").text("Invalid OTP, try again").show();
+        $(".otp-input").val("");
+      }
+    });
+
+    // auto-focus next input
+    $(".otp-input").on("input", function () {
+      if (this.value && $(this).next(".otp-input").length) {
+        $(this).next().focus();
+      }
+    });
+  });
+
+  // Back button logic
+$("#backBtn").on("click", function () {
+  $("#otpStep").hide();
+  $("#emailStep").show();
+  $(".otp-input").val(""); // clear OTP fields
+  $("#otpError").hide();
+});
+
+  </script>
+</body>
+</html>

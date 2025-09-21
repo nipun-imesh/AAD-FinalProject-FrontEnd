@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust - Fly Smart!</title>
+    <style>
+        :root {
+            --primary: #007bff;
+            --primary-dark: #0056b3;
+            --black: #1a202c;
+            --white: #ffffff;
+            --muted: #1b1f24;
+            --bg: #f4f7fa;
+            --card: #ffffff;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+            --radius: 16px;
+
+            --accent: #2563eb;
+            --accent-2: #1d4ed8;
+            --stroke: #3b8df3;
+            --brand: #2563eb;
+            /* Fixed: Added brand variable */
+            --text: #1a202c;
+            /* Fixed: Added text variable */
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto', system-ui, sans-serif;
+            line-height: 1.45;
+            -webkit-font-smoothing: antialiased;
+            color: var(--black);
+            background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop') no-repeat center center/cover;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 95%;
+            margin: 20px auto;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Fixed Header Styles */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: linear-gradient(rgba(255, 255, 255, 0.381), rgba(0, 0, 0, 0.233));
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(238, 240, 245, 0.6);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            max-width: 1100px;
+            /* Fixed: Added max-width */
+            margin: 0 auto;
+            /* Fixed: Center the nav */
+            width: 95%;
+            /* Fixed: Match container width */
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            text-decoration: none;
+        }
+
+        .logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--brand), #60a5fa);
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-weight: 800;
+        }
+
+        .brand-title {
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, var(--brand), #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            position: relative;
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 4px;
+            width: 0;
+            height: 2px;
+            background: var(--brand);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover {
+            color: var(--brand);
+            background: rgba(37, 99, 235, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 60%;
+        }
+
+        .nav-links a.active {
+            color: var(--brand);
+        }
+
+        /* Menu */
+        .menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            color: var(--brand);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
+        }
+
+        .menu-btn:hover {
+            background: rgba(37, 99, 235, 0.05);
+            border-color: var(--brand);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 99, 235, 0.15);
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .menu-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .menu-header {
+            padding: 1.2rem 1.5rem 0.8rem;
+            border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(96, 165, 250, 0.05));
+        }
+
+        .menu-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--brand);
+            margin: 0;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .menu-subtitle {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin: 0.2rem 0 0;
+        }
+
+        .menu-items {
+            padding: 0.8rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(96, 165, 250, 0.08));
+            color: var(--brand);
+            transform: translateX(4px);
+        }
+
+        .menu-item.danger:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(248, 113, 113, 0.08));
+            color: #ef4444;
+        }
+
+        .menu-icon {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .menu-item:hover .menu-icon {
+            opacity: 1;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            margin: 0.5rem 1rem;
+        }
+
+        /* Rest of your existing styles */
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero p {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: linear-gradient(rgba(0, 0, 0, 0), rgba(255, 255, 255, 0));
+            box-shadow: var(--shadow);
+            padding: 40px;
+            border-radius: var(--radius);
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            align-items: center;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            padding: 14px 12px;
+            font-size: 16px;
+            border: 1px solid var(--muted);
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        .swap-btn {
+            align-self: center;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 14px;
+            font-size: 18px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .swap-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .passenger-box input {
+            cursor: pointer;
+            background-color: #f8fafc;
+        }
+
+        .passenger-dropdown {
+            display: none;
+            position: absolute;
+            top: 58px;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius);
+            padding: 12px;
+            z-index: 10;
+            box-shadow: var(--shadow);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+            border-color: black;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        @media(max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .swap-btn {
+                margin: 10px 0;
+            }
+
+            .hero h1 {
+                font-size: 22px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            /* Hide nav links on mobile */
+        }
+
+        .from-info {
+            background: linear-gradient(180deg, rgba(79, 70, 229, 0.12), rgba(0, 0, 0, 0));
+            padding: 25px 45px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .from-info h3 {
+            margin: 0 0 6px 0;
+            font-size: 16px;
+            color: #007bff;
+        }
+
+        .from-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* footer */
+        .footer {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(59, 130, 246, 0.95));
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 3rem 0 2rem;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-brand-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .footer-heart {
+            color: #ef4444;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @media(max-width:768px) {
+            .destinations {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+
+        /* Optgroup label styling */
+        #country-option-label {
+            font-weight: 700;
+            /* bold label */
+            font-size: 14px;
+            /* font size */
+            color: var(--brand);
+            /* brand color */
+            background: #f1f5f9;
+            /* light background */
+            padding: 6px 10px;
+            /* spacing */
+        }
+
+        /* Option styling inside the optgroup */
+        #country-option-label option {
+            font-size: 14px;
+            padding: 8px 12px;
+            color: #334155;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        /* Option hover */
+        #country-option-label option:hover {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--brand);
+        }
+
+
+
+        /* datepicker */
+
+        /* Depart Date Picker */
+        #departGroup input[type="date"] {
+            padding: 12px 14px;
+            font-size: 16px;
+            border: 1px solid #007bff;
+            /* Primary color */
+            border-radius: 12px;
+            background-color: #f4f7fa;
+            transition: all 0.3s ease;
+        }
+
+        #departGroup input[type="date"]:focus {
+            outline: none;
+            border-color: #0056b3;
+            /* Darker primary on focus */
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        /* Return Date Picker */
+        #returnGroup input[type="date"] {
+            padding: 12px 14px;
+            font-size: 16px;
+            border: 1px solid #007bff;
+            border-radius: 12px;
+            background-color: #f4f7fa;
+            transition: all 0.3s ease;
+        }
+
+        #returnGroup input[type="date"]:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="nav">
+            <a class="brand" href="#">
+                <div class="logo">✈</div>
+                <div class="brand-title">Wanderlust</div>
+            </a>
+            <nav class="nav-links" aria-label="Primary">
+                <a href="index.html">Home</a>
+                <a href="searchPage.html">Booking</a>
+                <a href="destination.html">Destinations</a>
+                <a href="CustomerContact.html">Contact</a>
+            </nav>
+
+            <div class="menu-container">
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <span>Account</span>
+                    <span style="margin-left: 4px; transition: transform 0.3s ease;" id="menu-arrow">▼</span>
+                </button>
+                <div class="menu-dropdown" id="menuDropdown">
+                    <div class="menu-header">
+                        <h3 class="menu-title">Account</h3>
+                        <p class="menu-subtitle">Manage your travel preferences</p>
+                    </div>
+                    <div class="menu-items">
+                        <button id="loginButton" class="menu-item" onclick="window.location.href='login.html'">
+                            <span class="menu-icon">🔑</span>Login
+                        </button>
+                        <button id="signupButton" class="menu-item" onclick="window.location.href='signup.html'">
+                            <span class="menu-icon">📝</span>Sign Up
+                        </button>
+
+                        <div class="menu-divider"></div>
+
+                        <button id="profile" class="menu-item" onclick="window.location.href='profileManage.html'">
+                            <span class="menu-icon">👤</span>My Profile
+                        </button>
+
+                        <div class="menu-divider"></div>
+
+                        <button id="logoutbutton" class="menu-item danger">
+                            <span class="menu-icon">🚪</span>Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                <span class="create-word-line">Create your dream trip with a few taps</span>
+            </h1>
+            <p>Find your next adventure with Wanderlust's amazing deals!</p>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" data-type="round">Round Trip</div>
+                <div class="tab" data-type="oneway">One Way</div>
+                <div class="tab" data-type="multi">Multi-City</div>
+            </div>
+
+            <form id="flightForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="from">From</label>
+                        <select id="from" required>
+                            <optgroup label="Sri Lanka" id="country-option-label">
+                                <option value="Colombo (CMB)">Colombo (CMB)</option>
+                            </optgroup>
+
+                            <optgroup label="United Arab Emirates" id="country-option-label">
+                                <option value="Dubai (DXB)">Dubai (DXB)</option>
+                                <option value="Abu Dhabi (AUH)">Abu Dhabi (AUH)</option>
+                            </optgroup>
+
+                            <optgroup label="Qatar" id="country-option-label">
+                                <option value="Doha (DOH)">Doha (DOH)</option>
+                            </optgroup>
+
+                            <optgroup label="United Kingdom" id="country-option-label">
+                                <option value="London (LHR)">London (LHR)</option>
+                            </optgroup>
+
+                            <optgroup label="Singapore" id="country-option-label">
+                                <option value="Singapore (SIN)">Singapore (SIN)</option>
+                            </optgroup>
+
+                            <optgroup label="Türkiye" id="country-option-label">
+                                <option value="Istanbul (IST)">Istanbul (IST)</option>
+                            </optgroup>
+
+                            <optgroup label="Thailand" id="country-option-label">
+                                <option value="Bangkok (BKK)">Bangkok (BKK)</option>
+                                <option value="Phuket (HKT)">Phuket (HKT)</option>
+                            </optgroup>
+
+                            <optgroup label="Malaysia" id="country-option-label">
+                                <option value="Kuala Lumpur (KUL)">Kuala Lumpur (KUL)</option>
+                            </optgroup>
+
+                            <optgroup label="France" id="country-option-label">
+                                <option value="Paris (CDG)">Paris (CDG)</option>
+                            </optgroup>
+
+                            <optgroup label="USA" id="country-option-label">
+                                <option value="New York (JFK)">New York (JFK)</option>
+                                <option value="Los Angeles (LAX)">Los Angeles (LAX)</option>
+                                <option value="Chicago (ORD)">Chicago (ORD)</option>
+                                <option value="San Francisco (SFO)">San Francisco (SFO)</option>
+                                <option value="Boston (BOS)">Boston (BOS)</option>
+                                <option value="Miami (MIA)">Miami (MIA)</option>
+                                <option value="Dallas (DFW)">Dallas (DFW)</option>
+                                <option value="Houston (IAH)">Houston (IAH)</option>
+                                <option value="Atlanta (ATL)">Atlanta (ATL)</option>
+                                <option value="Seattle (SEA)">Seattle (SEA)</option>
+                                <option value="Philadelphia (PHL)">Philadelphia (PHL)</option>
+                                <option value="Washington (IAD)">Washington (IAD)</option>
+                                <option value="Orlando (MCO)">Orlando (MCO)</option>
+                                <option value="Denver (DEN)">Denver (DEN)</option>
+                                <option value="Las Vegas (LAS)">Las Vegas (LAS)</option>
+                                <option value="Phoenix (PHX)">Phoenix (PHX)</option>
+                                <option value="Detroit (DTW)">Detroit (DTW)</option>
+                                <option value="Minneapolis (MSP)">Minneapolis (MSP)</option>
+                                <option value="San Diego (SAN)">San Diego (SAN)</option>
+                                <option value="Charlotte (CLT)">Charlotte (CLT)</option>
+                                <option value="Tampa (TPA)">Tampa (TPA)</option>
+                                <option value="Portland (PDX)">Portland (PDX)</option>
+                                <option value="Austin (AUS)">Austin (AUS)</option>
+                                <option value="Newark (EWR)">Newark (EWR)</option>
+                                <option value="San Jose (SJC)">San Jose (SJC)</option>
+                            </optgroup>
+
+                            <optgroup label="Japan" id="country-option-label">
+                                <option value="Tokyo (HND)">Tokyo (HND)</option>
+                                <option value="Osaka (KIX)">Osaka (KIX)</option>
+                            </optgroup>
+
+                            <optgroup label="Australia" id="country-option-label">
+                                <option value="Sydney (SYD)">Sydney (SYD)</option>
+                                <option value="Melbourne (MEL)">Melbourne (MEL)</option>
+                            </optgroup>
+
+                            <optgroup label="India" id="country-option-label">
+                                <option value="Mumbai (BOM)">Mumbai (BOM)</option>
+                                <option value="Delhi (DEL)">Delhi (DEL)</option>
+                            </optgroup>
+
+                            <optgroup label="Germany" id="country-option-label">
+                                <option value="Frankfurt (FRA)">Frankfurt (FRA)</option>
+                            </optgroup>
+
+                            <optgroup label="Canada" id="country-option-label">
+                                <option value="Toronto (YYZ)">Toronto (YYZ)</option>
+                                <option value="Vancouver (YVR)">Vancouver (YVR)</option>
+                                <option value="Montreal (YUL)">Montreal (YUL)</option>
+                            </optgroup>
+
+                            <optgroup label="Hong Kong SAR" id="country-option-label">
+                                <option value="Hong Kong (HKG)">Hong Kong (HKG)</option>
+                            </optgroup>
+
+                            <optgroup label="South Korea" id="country-option-label">
+                                <option value="Seoul (ICN)">Seoul (ICN)</option>
+                            </optgroup>
+
+                            <optgroup label="Spain" id="country-option-label">
+                                <option value="Madrid (MAD)">Madrid (MAD)</option>
+                                <option value="Barcelona (BCN)">Barcelona (BCN)</option>
+                            </optgroup>
+
+                            <optgroup label="Italy" id="country-option-label">
+                                <option value="Rome (FCO)">Rome (FCO)</option>
+                            </optgroup>
+
+                            <optgroup label="Netherlands" id="country-option-label">
+                                <option value="Amsterdam (AMS)">Amsterdam (AMS)</option>
+                            </optgroup>
+
+                            <optgroup label="Switzerland" id="country-option-label">
+                                <option value="Zurich (ZRH)">Zurich (ZRH)</option>
+                            </optgroup>
+
+                            <optgroup label="Austria" id="country-option-label">
+                                <option value="Vienna (VIE)">Vienna (VIE)</option>
+                            </optgroup>
+
+                            <optgroup label="Denmark" id="country-option-label">
+                                <option value="Copenhagen (CPH)">Copenhagen (CPH)</option>
+                            </optgroup>
+
+                            <optgroup label="Sweden" id="country-option-label">
+                                <option value="Stockholm (ARN)">Stockholm (ARN)</option>
+                            </optgroup>
+
+                            <optgroup label="New Zealand" id="country-option-label">
+                                <option value="Auckland (AKL)">Auckland (AKL)</option>
+                            </optgroup>
+
+                            <optgroup label="South Africa" id="country-option-label">
+                                <option value="Cape Town (CPT)">Cape Town (CPT)</option>
+                                <option value="Johannesburg (JNB)">Johannesburg (JNB)</option>
+                            </optgroup>
+
+                            <optgroup label="Belgium" id="country-option-label">
+                                <option value="Brussels (BRU)">Brussels (BRU)</option>
+                            </optgroup>
+
+                            <optgroup label="Portugal" id="country-option-label">
+                                <option value="Lisbon (LIS)">Lisbon (LIS)</option>
+                            </optgroup>
+
+                            <optgroup label="Greece" id="country-option-label">
+                                <option value="Athens (ATH)">Athens (ATH)</option>
+                            </optgroup>
+
+                            <optgroup label="Poland" id="country-option-label">
+                                <option value="Warsaw (WAW)">Warsaw (WAW)</option>
+                            </optgroup>
+
+                            <optgroup label="Finland" id="country-option-label">
+                                <option value="Helsinki (HEL)">Helsinki (HEL)</option>
+                            </optgroup>
+
+                            <optgroup label="Norway" id="country-option-label">
+                                <option value="Oslo (OSL)">Oslo (OSL)</option>
+                            </optgroup>
+
+                            <optgroup label="Hungary" id="country-option-label">
+                                <option value="Budapest (BUD)">Budapest (BUD)</option>
+                            </optgroup>
+
+                            <optgroup label="Czech Republic" id="country-option-label">
+                                <option value="Prague (PRG)">Prague (PRG)</option>
+                            </optgroup>
+
+                            <optgroup label="Russia" id="country-option-label">
+                                <option value="Moscow (SVO)">Moscow (SVO)</option>
+                            </optgroup>
+
+                            <optgroup label="China" id="country-option-label">
+                                <option value="Shanghai (PVG)">Shanghai (PVG)</option>
+                                <option value="Beijing (PEK)">Beijing (PEK)</option>
+                            </optgroup>
+
+                            <optgroup label="Philippines" id="country-option-label">
+                                <option value="Manila (MNL)">Manila (MNL)</option>
+                            </optgroup>
+
+                            <optgroup label="Indonesia" id="country-option-label">
+                                <option value="Jakarta (CGK)">Jakarta (CGK)</option>
+                            </optgroup>
+
+                            <optgroup label="Vietnam" id="country-option-label">
+                                <option value="Hanoi (HAN)">Hanoi (HAN)</option>
+                                <option value="Ho Chi Minh City (SGN)">Ho Chi Minh City (SGN)</option>
+                            </optgroup>
+
+                            <optgroup label="Maldives" id="country-option-label">
+                                <option value="Male (MLE)">Male (MLE)</option>
+                            </optgroup>
+
+                            <optgroup label="Oman" id="country-option-label">
+                                <option value="Muscat (MCT)">Muscat (MCT)</option>
+                            </optgroup>
+
+                            <optgroup label="Saudi Arabia" id="country-option-label">
+                                <option value="Riyadh (RUH)">Riyadh (RUH)</option>
+                                <option value="Jeddah (JED)">Jeddah (JED)</option>
+                            </optgroup>
+
+                            <optgroup label="Bahrain" id="country-option-label">
+                                <option value="Bahrain (BAH)">Bahrain (BAH)</option>
+                            </optgroup>
+
+                            <optgroup label="Jordan" id="country-option-label">
+                                <option value="Amman (AMM)">Amman (AMM)</option>
+                            </optgroup>
+
+                            <optgroup label="Morocco" id="country-option-label">
+                                <option value="Casablanca (CMN)">Casablanca (CMN)</option>
+                            </optgroup>
+
+                            <optgroup label="Mexico" id="country-option-label">
+                                <option value="Mexico City (MEX)">Mexico City (MEX)</option>
+                            </optgroup>
+
+                            <optgroup label="Colombia" id="country-option-label">
+                                <option value="Bogota (BOG)">Bogota (BOG)</option>
+                            </optgroup>
+
+                            <optgroup label="Peru" id="country-option-label">
+                                <option value="Lima (LIM)">Lima (LIM)</option>
+                            </optgroup>
+
+                            <optgroup label="Chile" id="country-option-label">
+                                <option value="Santiago (SCL)">Santiago (SCL)</option>
+                            </optgroup>
+
+                            <optgroup label="Argentina" id="country-option-label">
+                                <option value="Buenos Aires (EZE)">Buenos Aires (EZE)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <button type="button" class="swap-btn" id="swapBtn">⇆</button>
+                    <div class="form-group">
+                        <label for="to">To</label>
+                        <select id="to" required>
+                            <optgroup label="Sri Lanka" id="country-option-label">
+                                <option value="Colombo (CMB)">Colombo (CMB)</option>
+                            </optgroup>
+
+                            <optgroup label="United Arab Emirates" id="country-option-label">
+                                <option value="Dubai (DXB)">Dubai (DXB)</option>
+                                <option value="Abu Dhabi (AUH)">Abu Dhabi (AUH)</option>
+                            </optgroup>
+
+                            <optgroup label="Qatar" id="country-option-label">
+                                <option value="Doha (DOH)">Doha (DOH)</option>
+                            </optgroup>
+
+                            <optgroup label="United Kingdom" id="country-option-label">
+                                <option value="London (LHR)">London (LHR)</option>
+                            </optgroup>
+
+                            <optgroup label="Singapore" id="country-option-label">
+                                <option value="Singapore (SIN)">Singapore (SIN)</option>
+                            </optgroup>
+
+                            <optgroup label="Türkiye" id="country-option-label">
+                                <option value="Istanbul (IST)">Istanbul (IST)</option>
+                            </optgroup>
+
+                            <optgroup label="Thailand" id="country-option-label">
+                                <option value="Bangkok (BKK)">Bangkok (BKK)</option>
+                                <option value="Phuket (HKT)">Phuket (HKT)</option>
+                            </optgroup>
+
+                            <optgroup label="Malaysia" id="country-option-label">
+                                <option value="Kuala Lumpur (KUL)">Kuala Lumpur (KUL)</option>
+                            </optgroup>
+
+                            <optgroup label="France" id="country-option-label">
+                                <option value="Paris (CDG)">Paris (CDG)</option>
+                            </optgroup>
+
+                            <optgroup label="USA" id="country-option-label">
+                                <option value="New York (JFK)">New York (JFK)</option>
+                                <option value="Los Angeles (LAX)">Los Angeles (LAX)</option>
+                                <option value="Chicago (ORD)">Chicago (ORD)</option>
+                                <option value="San Francisco (SFO)">San Francisco (SFO)</option>
+                                <option value="Boston (BOS)">Boston (BOS)</option>
+                                <option value="Miami (MIA)">Miami (MIA)</option>
+                                <option value="Dallas (DFW)">Dallas (DFW)</option>
+                                <option value="Houston (IAH)">Houston (IAH)</option>
+                                <option value="Atlanta (ATL)">Atlanta (ATL)</option>
+                                <option value="Seattle (SEA)">Seattle (SEA)</option>
+                                <option value="Philadelphia (PHL)">Philadelphia (PHL)</option>
+                                <option value="Washington (IAD)">Washington (IAD)</option>
+                                <option value="Orlando (MCO)">Orlando (MCO)</option>
+                                <option value="Denver (DEN)">Denver (DEN)</option>
+                                <option value="Las Vegas (LAS)">Las Vegas (LAS)</option>
+                                <option value="Phoenix (PHX)">Phoenix (PHX)</option>
+                                <option value="Detroit (DTW)">Detroit (DTW)</option>
+                                <option value="Minneapolis (MSP)">Minneapolis (MSP)</option>
+                                <option value="San Diego (SAN)">San Diego (SAN)</option>
+                                <option value="Charlotte (CLT)">Charlotte (CLT)</option>
+                                <option value="Tampa (TPA)">Tampa (TPA)</option>
+                                <option value="Portland (PDX)">Portland (PDX)</option>
+                                <option value="Austin (AUS)">Austin (AUS)</option>
+                                <option value="Newark (EWR)">Newark (EWR)</option>
+                                <option value="San Jose (SJC)">San Jose (SJC)</option>
+                            </optgroup>
+
+                            <optgroup label="Japan" id="country-option-label">
+                                <option value="Tokyo (HND)">Tokyo (HND)</option>
+                                <option value="Osaka (KIX)">Osaka (KIX)</option>
+                            </optgroup>
+
+                            <optgroup label="Australia" id="country-option-label">
+                                <option value="Sydney (SYD)">Sydney (SYD)</option>
+                                <option value="Melbourne (MEL)">Melbourne (MEL)</option>
+                            </optgroup>
+
+                            <optgroup label="India" id="country-option-label">
+                                <option value="Mumbai (BOM)">Mumbai (BOM)</option>
+                                <option value="Delhi (DEL)">Delhi (DEL)</option>
+                            </optgroup>
+
+                            <optgroup label="Germany" id="country-option-label">
+                                <option value="Frankfurt (FRA)">Frankfurt (FRA)</option>
+                            </optgroup>
+
+                            <optgroup label="Canada" id="country-option-label">
+                                <option value="Toronto (YYZ)">Toronto (YYZ)</option>
+                                <option value="Vancouver (YVR)">Vancouver (YVR)</option>
+                                <option value="Montreal (YUL)">Montreal (YUL)</option>
+                            </optgroup>
+
+                            <optgroup label="Hong Kong SAR" id="country-option-label">
+                                <option value="Hong Kong (HKG)">Hong Kong (HKG)</option>
+                            </optgroup>
+
+                            <optgroup label="South Korea" id="country-option-label">
+                                <option value="Seoul (ICN)">Seoul (ICN)</option>
+                            </optgroup>
+
+                            <optgroup label="Spain" id="country-option-label">
+                                <option value="Madrid (MAD)">Madrid (MAD)</option>
+                                <option value="Barcelona (BCN)">Barcelona (BCN)</option>
+                            </optgroup>
+
+                            <optgroup label="Italy" id="country-option-label">
+                                <option value="Rome (FCO)">Rome (FCO)</option>
+                            </optgroup>
+
+                            <optgroup label="Netherlands" id="country-option-label">
+                                <option value="Amsterdam (AMS)">Amsterdam (AMS)</option>
+                            </optgroup>
+
+                            <optgroup label="Switzerland" id="country-option-label">
+                                <option value="Zurich (ZRH)">Zurich (ZRH)</option>
+                            </optgroup>
+
+                            <optgroup label="Austria" id="country-option-label">
+                                <option value="Vienna (VIE)">Vienna (VIE)</option>
+                            </optgroup>
+
+                            <optgroup label="Denmark" id="country-option-label">
+                                <option value="Copenhagen (CPH)">Copenhagen (CPH)</option>
+                            </optgroup>
+
+                            <optgroup label="Sweden" id="country-option-label">
+                                <option value="Stockholm (ARN)">Stockholm (ARN)</option>
+                            </optgroup>
+
+                            <optgroup label="New Zealand" id="country-option-label">
+                                <option value="Auckland (AKL)">Auckland (AKL)</option>
+                            </optgroup>
+
+                            <optgroup label="South Africa" id="country-option-label">
+                                <option value="Cape Town (CPT)">Cape Town (CPT)</option>
+                                <option value="Johannesburg (JNB)">Johannesburg (JNB)</option>
+                            </optgroup>
+
+                            <optgroup label="Belgium" id="country-option-label">
+                                <option value="Brussels (BRU)">Brussels (BRU)</option>
+                            </optgroup>
+
+                            <optgroup label="Portugal" id="country-option-label">
+                                <option value="Lisbon (LIS)">Lisbon (LIS)</option>
+                            </optgroup>
+
+                            <optgroup label="Greece" id="country-option-label">
+                                <option value="Athens (ATH)">Athens (ATH)</option>
+                            </optgroup>
+
+                            <optgroup label="Poland" id="country-option-label">
+                                <option value="Warsaw (WAW)">Warsaw (WAW)</option>
+                            </optgroup>
+
+                            <optgroup label="Finland" id="country-option-label">
+                                <option value="Helsinki (HEL)">Helsinki (HEL)</option>
+                            </optgroup>
+
+                            <optgroup label="Norway" id="country-option-label">
+                                <option value="Oslo (OSL)">Oslo (OSL)</option>
+                            </optgroup>
+
+                            <optgroup label="Hungary" id="country-option-label">
+                                <option value="Budapest (BUD)">Budapest (BUD)</option>
+                            </optgroup>
+
+                            <optgroup label="Czech Republic" id="country-option-label">
+                                <option value="Prague (PRG)">Prague (PRG)</option>
+                            </optgroup>
+
+                            <optgroup label="Russia" id="country-option-label">
+                                <option value="Moscow (SVO)">Moscow (SVO)</option>
+                            </optgroup>
+
+                            <optgroup label="China" id="country-option-label">
+                                <option value="Shanghai (PVG)">Shanghai (PVG)</option>
+                                <option value="Beijing (PEK)">Beijing (PEK)</option>
+                            </optgroup>
+
+                            <optgroup label="Philippines" id="country-option-label">
+                                <option value="Manila (MNL)">Manila (MNL)</option>
+                            </optgroup>
+
+                            <optgroup label="Indonesia" id="country-option-label">
+                                <option value="Jakarta (CGK)">Jakarta (CGK)</option>
+                            </optgroup>
+
+                            <optgroup label="Vietnam" id="country-option-label">
+                                <option value="Hanoi (HAN)">Hanoi (HAN)</option>
+                                <option value="Ho Chi Minh City (SGN)">Ho Chi Minh City (SGN)</option>
+                            </optgroup>
+
+                            <optgroup label="Maldives" id="country-option-label">
+                                <option value="Male (MLE)">Male (MLE)</option>
+                            </optgroup>
+
+                            <optgroup label="Oman" id="country-option-label">
+                                <option value="Muscat (MCT)">Muscat (MCT)</option>
+                            </optgroup>
+
+                            <optgroup label="Saudi Arabia" id="country-option-label">
+                                <option value="Riyadh (RUH)">Riyadh (RUH)</option>
+                                <option value="Jeddah (JED)">Jeddah (JED)</option>
+                            </optgroup>
+
+                            <optgroup label="Bahrain" id="country-option-label">
+                                <option value="Bahrain (BAH)">Bahrain (BAH)</option>
+                            </optgroup>
+
+                            <optgroup label="Jordan" id="country-option-label">
+                                <option value="Amman (AMM)">Amman (AMM)</option>
+                            </optgroup>
+
+                            <optgroup label="Morocco" id="country-option-label">
+                                <option value="Casablanca (CMN)">Casablanca (CMN)</option>
+                            </optgroup>
+
+                            <optgroup label="Mexico" id="country-option-label">
+                                <option value="Mexico City (MEX)">Mexico City (MEX)</option>
+                            </optgroup>
+
+                            <optgroup label="Colombia" id="country-option-label">
+                                <option value="Bogota (BOG)">Bogota (BOG)</option>
+                            </optgroup>
+
+                            <optgroup label="Peru" id="country-option-label">
+                                <option value="Lima (LIM)">Lima (LIM)</option>
+                            </optgroup>
+
+                            <optgroup label="Chile" id="country-option-label">
+                                <option value="Santiago (SCL)">Santiago (SCL)</option>
+                            </optgroup>
+
+                            <optgroup label="Argentina" id="country-option-label">
+                                <option value="Buenos Aires (EZE)">Buenos Aires (EZE)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group" id="departGroup">
+                        <label for="depart">Depart</label>
+                        <input type="date" id="depart" required>
+                    </div>
+                    <div class="form-group" id="returnGroup">
+                        <label for="return">Return</label>
+                        <input type="date" id="return" required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="class">Class</label>
+                        <select id="class">
+                            <option>Economy</option>
+                            <option>Premium Economy</option>
+                            <option>Business</option>
+                            <option>First</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn" type="submit">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Search Flights
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="from-info">
+            <h3>Why choose Wanderlust?</h3>
+            <p>
+                Planning an overseas travel is never easy – with so many places to visit and several to explore!
+                Wanderlust can help you find the best airfares and hotels, thanks to our innovative system. We provide
+                cheaper air tickets guaranteed with good connections, accompanied by amazing offers to any destination.
+            </p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-top">
+                <div>
+                    <div class="footer-brand">
+                        <div class="footer-logo">W</div>
+                        <div class="footer-brand-text">WanderLite</div>
+                    </div>
+                    <p class="footer-description">Your gateway to extraordinary adventures. Discover breathtaking
+                        destinations,
+                        connect with fellow travelers, and create memories that last a lifetime.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Support</a>
+                    <a href="#">Contact Us</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 WanderLite Travel. Made with <span class="footer-heart">♥</span> for adventurers worldwide.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        function toggleMenu() {
+            const dropdown = document.getElementById("menuDropdown");
+            const arrow = document.getElementById("menu-arrow");
+
+            dropdown.classList.toggle("show");
+            arrow.style.transform = dropdown.classList.contains("show")
+                ? "rotate(180deg)"
+                : "rotate(0deg)";
+        }
+
+        $(document).ready(function () {
+            // =====================
+            // Swap From/To
+            // =====================
+            $('#swapBtn').click(function () {
+                let fromVal = $('#from').val();
+                let toVal = $('#to').val();
+                $('#from').val(toVal);
+                $('#to').val(fromVal);
+            });
+
+            // =====================
+            // Tab switching (Round/One-way/Multi-city)
+            // =====================
+            $('.tab').click(function () {
+                $('.tab').removeClass('active');
+                $(this).addClass('active');
+                const type = $(this).data('type');
+                if (type === 'oneway') {
+                    $('#returnGroup').hide();
+                    $('#return').prop('required', false);
+                } else {
+                    $('#returnGroup').show();
+                    $('#return').prop('required', true);
+                }
+            });
+
+            // =====================
+            // Passenger dropdown
+            // =====================
+            $('#passengers').click(function () {
+                $('#passengerDropdown').toggle();
+            });
+
+            function updatePassengers() {
+                const adults = $('#adults').val();
+                const children = $('#children').val();
+                const infants = $('#infants').val();
+                let text = `${adults} Adult${adults > 1 ? 's' : ''}`;
+                if (children > 0) text += `, ${children} Child${children > 1 ? 'ren' : ''}`;
+                if (infants > 0) text += `, ${infants} Infant${infants > 1 ? 's' : ''}`;
+                $('#passengers').val(text);
+                $('#passengerDropdown').hide();
+            }
+            window.updatePassengers = updatePassengers;
+
+            $(document).click(function (e) {
+                if (!$(e.target).closest('.passenger-box').length) {
+                    $('#passengerDropdown').hide();
+                }
+            });
+
+            // =====================
+            // Load all tickets (Optional)
+            // =====================
+            function loadAllTickets() {
+                $.ajax({
+                    url: "http://localhost:8080/api/v1/ticketData/getticketdata",
+                    type: "GET",
+                    success: function (res) {
+                        console.log("All Tickets:", res);
+                    },
+                    error: function (err) {
+                        console.error("Error loading tickets", err);
+                    }
+                });
+            }
+
+            // =====================
+            // SEARCH ticket – GET with query parameters
+            // =====================
+            $('#flightForm').submit(function (e) {
+                e.preventDefault();
+
+                const searchParams = {
+                    from: $('#from').val(),
+                    to: $('#to').val(),
+                    depart: $('#depart').val(),
+                    returnDate: $('#return').val(),
+                    travelClass: $('#class').val()
+                };
+                localStorage.setItem('searchParams', JSON.stringify(searchParams));
+
+                window.location.href = "ticketBooking.html";
+            });
+
+            const token = localStorage.getItem("token");
+
+            if (token) {
+                $("#profile").show();
+                $("#logoutbutton").show();
+                $("#loginButton").hide();
+                $("#signupButton").hide();
+            } else {
+                $("#profile").hide();
+                $("#logoutbutton").hide();
+                $("#loginButton").show();
+                $("#signupButton").show();
+            }
+        });
+
+        $("#logoutbutton").click(function () {
+            try {
+                localStorage.removeItem("token");
+                localStorage.removeItem("email");
+                localStorage.removeItem("role");
+                style = document.getElementById("profile").style.display = "none";
+                alert("You have been logged out!");
+                window.location.href = "index.html";
+            } catch (err) {
+                console.error("Logout error:", err);
+                alert("You have been logged out!");
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>

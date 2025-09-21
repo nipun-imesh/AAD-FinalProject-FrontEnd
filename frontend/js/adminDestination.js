@@ -36,11 +36,14 @@ $(document).ready(function () {
       localStorage.removeItem("email");
       localStorage.removeItem("role");
       document.getElementById("profile").style.display = "none";
-      alert("You have been logged out!");
+      // alert("You have been logged out!");
+      toastr.success("You have been logged out");
+
       window.location.href = "index.html";
     } catch (err) {
       console.error("Logout error:", err);
-      alert("You have been logged out!");
+      toastr.success('Admin created successfully');
+      // alert("You have been logged out!");
       window.location.href = "index.html";
     }
   });
@@ -188,11 +191,13 @@ $(document).ready(function () {
         data: JSON.stringify(destination),
         success: function (response) {
           if (response.code === 201) {
-            showAlert("Destination saved successfully!", "success");
+            toastr.success("Success to save destination");
             loadDestinations();
             resetForm();
           } else {
-            showAlert("Failed to save destination", "error");
+            toastr.success("Failed to save destination");
+
+            // showAlert("Failed to save destination", "error");
           }
         },
         error: function (xhr) {

@@ -679,7 +679,7 @@
           data: JSON.stringify(formData),
           success: function (response) {
             if (response.statusCode === 201) {
-              toastr.error('Admin created successfully');
+              toastr.success('Admin created successfully');
               form[0].reset();
             } else {
               toastr.error('Felde create admin!');
